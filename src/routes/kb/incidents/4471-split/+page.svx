@@ -1,0 +1,63 @@
+---
+layout: runbook
+title: '#4471 · three problems, not one'
+owner: Aravind Domakonda
+status: open
+reviewed: 2026-10-29
+signature: Aravind Domakonda
+---
+
+<script>
+  import ProblemTable from '#lib/kb/ProblemTable.svelte';
+  import Callout from '#lib/kb/Callout.svelte';
+  import RenderStamp from '#lib/kb/RenderStamp.svelte';
+</script>
+
+#4471 is marked known: one issue, one fix queued. Its own reports say otherwise. Read by tenant
+and by the way each report came in, not by subject line, they hold three different problems.
+Each one now has its own ticket.
+
+<Callout kind="warn">
+The queued parser fix does not close #4471. Two of its problems are not in the parser.
+</Callout>
+
+## What #4471 holds
+
+<ProblemTable
+  ticket={4471}
+  issues={{
+    parser: 'https://github.com/Domakonda/MegaDev/issues/1',
+    hint: 'https://github.com/Domakonda/MegaDev/issues/2',
+    'one-day-move': 'https://github.com/Domakonda/MegaDev/issues/3',
+  }}
+/>
+
+## The three problems
+
+- **`parser`**: the shared parser reads every date month first. Our tenants write the day first,
+  so "4 March" comes out as "3 April". These come in by app and email, and by form from tenants
+  on booking-v2, whose hint is right.
+- **`hint`**: booking-v3 prints `MM/DD/YYYY` under its date field. People type what the hint
+  tells them, and the form reads it day first. Only form reports from booking-v3 tenants. The
+  parser fix leaves this one as it is.
+- **`one-day-move`**: the date moves by one day, not a swap: Tuesday becomes Monday, a client in
+  Lisbon and one in Toronto get different days for the same meeting, an invite arrives before the
+  booking. A month-first parser cannot do that. It points to time zones. The desk noted these
+  reports in `desk-notes.json`; the table on the #4471 page still files them under `parser`.
+
+## Why one ticket hid them
+
+- Decision [0001](/kb/decisions/0001-dedupe-by-subject) merges on subject line. All three
+  problems produce the same subjects ("Wrong day on the invite", "Dates mixed up"), so they
+  landed in one ticket.
+- Intake's `hint` tag follows the reporter's browser, not the tenant. It marks US-English
+  browsers as `hint`, and misses real `hint` reports from local browsers. Count by tenant and
+  channel (`causes.ts`), never by tag.
+- The export repeats reports across its pages. Count each id once (`uniqueById`).
+
+## What to do now
+
+1. Work each ticket on its own; close #4471 only when all three are fixed.
+2. Replace decision 0001 with a new record: merge on cause, not on subject.
+
+<RenderStamp {signature} />

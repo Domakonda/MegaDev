@@ -34,3 +34,9 @@ Support desk. Decision records: whoever signed them.
 ---
 
 Exported 2026-10-04 from the `support` repo, `apps/kb/` → `src/`.
+
+## Build (outside the `support` repo)
+
+`npm install`, then `npm run build`: every page is prerendered to `build/`.
+`node tools/snapshot.mjs kb/incidents/4471-split rendered/kb/incidents/4471-split.html` writes one
+page as a single HTML file, CSS inlined: the page as the desk sees it.
