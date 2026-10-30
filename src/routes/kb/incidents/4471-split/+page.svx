@@ -13,12 +13,13 @@ signature: Aravind Domakonda
   import RenderStamp from '#lib/kb/RenderStamp.svelte';
 </script>
 
-#4471 is marked known: one issue, one fix queued. Its own reports say otherwise. Read by tenant
+#4471 was marked known: one issue, one fix queued. Its own reports say otherwise. Read by tenant
 and by the way each report came in, not by subject line, they hold three different problems.
-Each one now has its own ticket.
+Each one has its own ticket.
 
 <Callout kind="warn">
-The queued parser fix does not close #4471. Two of its problems are not in the parser.
+Engineering closed #4471 on 5 October. That closed two of its problems. The one-day moves are
+still open: no fix touched them.
 </Callout>
 
 ## What #4471 holds
@@ -26,24 +27,25 @@ The queued parser fix does not close #4471. Two of its problems are not in the p
 <ProblemTable
   ticket={4471}
   issues={{
-    parser: 'https://github.com/Domakonda/MegaDev/issues/1',
-    hint: 'https://github.com/Domakonda/MegaDev/issues/2',
-    'one-day-move': 'https://github.com/Domakonda/MegaDev/issues/3',
+    parser: { url: 'https://github.com/Domakonda/MegaDev/issues/1', outcome: 'fixed' },
+    hint: { url: 'https://github.com/Domakonda/MegaDev/issues/2', outcome: "won't fix" },
+    'one-day-move': { url: 'https://github.com/Domakonda/MegaDev/issues/3', outcome: 'open' },
   }}
 />
 
 ## The three problems
 
-- **`parser`**: the shared parser reads every date month first. Our tenants write the day first,
-  so "4 March" comes out as "3 April". These come in by app and email, and by form from tenants
-  on booking-v2, whose hint is right.
-- **`hint`**: booking-v3 prints `MM/DD/YYYY` under its date field. People type what the hint
-  tells them, and the form reads it day first. Only form reports from booking-v3 tenants. The
-  parser fix leaves this one as it is.
+- **`parser`**: the shared parser read every date month first. Our tenants write the day first,
+  so "4 March" came out as "3 April". These came in by app and email, and by form from tenants
+  on booking-v2, whose hint is right. **Fixed** 5 October: `fix(dates): parse dd/mm for eu locales`.
+- **`hint`**: booking-v3 printed `MM/DD/YYYY` under its date field. People typed what the hint
+  told them, and the form read it day first. Only form reports from booking-v3 tenants; the
+  parser fix did not touch it. **Won't fix**: the booking-v3 form is retired, and the hint with it.
 - **`one-day-move`**: the date moves by one day, not a swap: Tuesday becomes Monday, a client in
   Lisbon and one in Toronto get different days for the same meeting, an invite arrives before the
   booking. A month-first parser cannot do that. It points to time zones. The desk noted these
-  reports in `desk-notes.json`; the table on the #4471 page still files them under `parser`.
+  reports in `desk-notes.json` and files them under `parser` by tenant, so the parser fix closed
+  them on paper. **Still open.**
 
 ## Why one ticket hid them
 
@@ -57,7 +59,8 @@ The queued parser fix does not close #4471. Two of its problems are not in the p
 
 ## What to do now
 
-1. Work each ticket on its own; close #4471 only when all three are fixed.
+1. Do not answer new one-day-move reports with "fixed". Keep them on their own ticket until
+   someone finds the time-zone cause.
 2. Replace decision 0001 with a new record: merge on cause, not on subject.
 
 <RenderStamp {signature} />
